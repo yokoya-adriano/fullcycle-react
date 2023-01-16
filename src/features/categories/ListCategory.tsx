@@ -3,11 +3,17 @@ import { Link } from "react-router-dom"
 import { useAppSelector } from "../../app/hooks"
 import { selectCategories } from "./categorySlice"
 import DeleteIcon from '@mui/icons-material/Delete';
-import { DataGrid, GridColDef, GridRenderCellParams, GridRowsProp } from '@mui/x-data-grid';
+import { DataGrid, GridColDef, GridRenderCellParams, GridRowsProp, GridToolbar } from '@mui/x-data-grid';
 
 export const CategoryList = () => {
-
     const categories = useAppSelector(selectCategories)
+
+    const componentProps = {
+        toolbar: {
+            showQuickFilter: true,
+            quickFilterProps: { debounceMs: 500 },
+        },
+    }
 
     //use categories to create rows
     const rows: GridRowsProp = categories.map((category) => ({
@@ -23,6 +29,7 @@ export const CategoryList = () => {
             field: 'name',
             headerName: 'Name',
             flex: 1,
+            renderCell: renderNameCell,
         },
         {
             field: 'isActive',
@@ -43,6 +50,17 @@ export const CategoryList = () => {
             renderCell: renderActionsCell,
         }
     ];
+
+    function renderNameCell(rowData: GridRenderCellParams) {
+        return (
+                <Link
+                    style={{ textDecoration: "none" }}
+                    to={`/categories/edit/${rowData.id}`}
+                >
+                    <Typography color="primary">{rowData.value}</Typography>
+                </Link>
+        )
+    } 
     
     function renderIsActiveCell(rowData: GridRenderCellParams) {
         return (
@@ -89,9 +107,19 @@ export const CategoryList = () => {
                 </Button>
             </Box>
 
-            <div style={{ height: 300, width: '100%' }}>
-                <DataGrid rows={rows} columns={columns} rowsPerPageOptions={[2, 10, 20, 100]} />
-            </div>
+            <Box sx={{ display: "flex", height: 600 }}>
+                <DataGrid
+                    rows={rows}
+                    columns={columns}
+                    components={{ Toolbar: GridToolbar }}
+                    disableColumnSelector
+                    disableColumnFilter
+                    disableDensitySelector
+                    disableSelectionOnClick
+                    componentsProps={componentProps}
+                    rowsPerPageOptions={[2, 10, 20, 100]}
+                />
+            </Box>
         </Box>
     )
 }
