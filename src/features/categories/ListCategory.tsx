@@ -1,12 +1,13 @@
 import { Box, Button, IconButton, Typography } from "@mui/material"
 import { Link } from "react-router-dom"
-import { useAppSelector } from "../../app/hooks"
-import { selectCategories } from "./categorySlice"
+import { useAppDispatch, useAppSelector } from "../../app/hooks"
+import { deleteCategory, selectCategories } from "./categorySlice"
 import DeleteIcon from '@mui/icons-material/Delete';
 import { DataGrid, GridColDef, GridRenderCellParams, GridRowsProp, GridToolbar } from '@mui/x-data-grid';
 
 export const CategoryList = () => {
     const categories = useAppSelector(selectCategories)
+    const dispatch = useAppDispatch()
 
     const componentProps = {
         toolbar: {
@@ -46,6 +47,7 @@ export const CategoryList = () => {
         {
             field: 'id',
             headerName: "Actions",
+            type: "string",
             flex: 1,
             renderCell: renderActionsCell,
         }
@@ -72,11 +74,15 @@ export const CategoryList = () => {
         )
     }
 
+    function handleDeleteCategory(id: string) {
+        dispatch(deleteCategory(id))
+    }
+
     function renderActionsCell(params: GridRenderCellParams) {
         return (
             <IconButton
                 color="secondary"
-                onClick={() => console.log('clicked')}
+                onClick={() => handleDeleteCategory(params.value)}
                 aria-label="delete"            
             >
                 <DeleteIcon />
