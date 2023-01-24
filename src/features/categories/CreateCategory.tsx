@@ -1,3 +1,4 @@
+import { useSnackbar } from "notistack"
 import { Box, Paper, Typography } from "@mui/material"
 import { useState } from "react"
 import { useAppDispatch } from "../../app/hooks"
@@ -16,10 +17,12 @@ export const CategoryCreate = () => {
         deleted_at: "",
     })
     const dispatch = useAppDispatch()
+    const { enqueueSnackbar } = useSnackbar()
 
     async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
         e.preventDefault()
         dispatch(createCategory(categoryState))
+        enqueueSnackbar("Category created successfully", { variant: "success" })
     }
     
     const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
